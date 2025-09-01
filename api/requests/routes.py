@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 
 from config.database import get_db
-from model import Request as RequestModel, User
+from model import Request as RequestModel
 
 router = APIRouter(prefix="/permintaan", tags=["permintaan"])
 
@@ -54,6 +54,47 @@ async def add_request(
         user_id=int(request.cookies.get("uid")),
     )
     db.add(new_req)
+    db.commit()
+
+    return RedirectResponse(url="/dashboard", status_code=303)
+
+@router.get("/setuju/{id}")
+async def setuju_permintaaan(id: int, request: Request, db: Session = Depends(get_db)):
+    permintaan = db.query(RequestModel).filter(RequestModel.id == id).first()
+
+    if not permintaan:
+        return RedirectResponse(url="/dashboard", status_code=303)
+
+    permintaan.status = "disetujui"
+    db.commit()
+    return RedirectResponse(url="/dashboard", status_code=303)
+
+@router.get("/tolak/{id}")
+async def tolak_permintaaan(id: int, request: Request, db: Session = Depends(get_db)):
+    permintaan = db.query(RequestModel).filter(RequestModel.id == id).first()
+
+    if not permintaan:
+        return RedirectResponse(url="/dashboard", status_code=303)
+
+    permintaan.status = "ditolak"
+    db.commit()
+    return RedirectResponse(url="/dashboard", status_code=303)
+
+@router.get("/hapus/{id}")
+async def hapus_permintaan(id: int, request: Request, db: Session = Depends(get_db)):
+    permintaan = db.query(RequestModel).filter(RequestModel.id == id).first()
+
+    if not permintaan:
+        return RedirectResponse(url="/dashboard", status_code=303)
+
+    # cek apakah ada file yang tersimpan
+    if permintaan.file_path:
+        file_path = os.path.join("uploaded_files", os.path.basename(permintaan.file_path))
+        if os.path.exists(file_path):
+            os.remove(file_path)  # hapus file dari folder
+
+    # hapus data dari DB
+    db.delete(permintaan)
     db.commit()
 
     return RedirectResponse(url="/dashboard", status_code=303)
