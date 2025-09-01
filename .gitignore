@@ -1,1 +1,5 @@
 uploaded_files/
+__pycache__/
+.env
+.venv/
+venv/
