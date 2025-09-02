@@ -10,7 +10,10 @@
 <nav class="navbar navbar-dark bg-dark shadow">
   <div class="container-fluid">
     <span class="navbar-brand"><i class="fa-solid fa-user-shield"></i> Dashboard Admin</span>
-    <div class="d-flex gap-2"><a href="/users" class="btn btn-warning"><i class="fa-solid fa-users-gear"></i> Kelola User</a> <a href="/auth/logout" class="btn btn-outline-light"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></div>
+    <div class="d-flex gap-2">
+      <a href="/users" class="btn btn-warning"><i class="fa-solid fa-users-gear"></i> Kelola User</a>
+      <a href="/auth/logout" class="btn btn-outline-light"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    </div>
   </div>
 </nav>
 
@@ -31,46 +34,80 @@
           <th>Status</th>
           <th>Dibuat</th>
           <th>Aksi</th>
-          <th></th>
+          <th>bukti tf</th>
         </tr>
       </thead>
       <tbody>
         {% for p in permintaan %}
-        <tr>
-          <td>{{ loop.index }}</td>
-          <td>{{ p['username'] }}</td>
-          <td>{{ p['judul'] }}</td>
-          <td>{{ p['deskripsi'] }}</td>
-          <td>Rp {{ "{:,.2f}".format(p['anggaran'] or 0) }}</td>
-          <td>
-            {% if p['file_path'] %}
-              <a href="/{{ p['file_path'] }}" target="_blank">Lihat File</a>
-            {% else %}
-              -
-            {% endif %}
-          </td>
-          <td>
-            {% if p['status'] == "menunggu" %}
-              <span class="badge bg-warning">Menunggu</span>
-            {% elif p['status'] == "disetujui" %}
-              <span class="badge bg-success">Disetujui</span>
-            {% else %}
-              <span class="badge bg-danger">Ditolak</span>
-            {% endif %}
-          </td>
-          <td><small class="text-muted">{{ p['created_at'] }}</small></td>
-          <td>
-            <a href="/permintaan/setuju/{{ p['id'] }}" class="btn btn-sm btn-success"><i class="fa-solid fa-check"></i></a>
-            <a href="/permintaan/tolak/{{ p['id'] }}" class="btn btn-sm btn-danger"><i class="fa-solid fa-xmark"></i></a>
-          </td>
-          <td>
-            <a href="/permintaan/hapus/{{ p['id'] }}" class="btn btn-sm btn-outline-secondary" onclick="return confirm('Hapus permintaan ini?')"><i class="fa-solid fa-trash"></i></a>
-          </td>
-        </tr>
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ p['username'] }}</td>
+            <td>{{ p['judul'] }}</td>
+            <td>{{ p['deskripsi'] }}</td>
+            <td>Rp {{ "{:,.2f}".format(p['anggaran'] or 0) }}</td>
+            <td>
+              {% if p['file_path'] %}
+                <a href="/{{ p['file_path'] }}" target="_blank">Lihat File</a>
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>
+              {% if p['status'] == "menunggu" %}
+                <span class="badge bg-warning">Menunggu</span>
+              {% elif p['status'] == "disetujui" %}
+                <span class="badge bg-success">Disetujui</span>
+              {% else %}
+                <span class="badge bg-danger">Ditolak</span>
+              {% endif %}
+            </td>
+            <td><small class="text-muted">{{ p['created_at'] }}</small></td>
+            <td>
+              <div class="btn-group">
+                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fa-solid fa-gear"></i> Aksi
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item text-success" href="/permintaan/setuju/{{ p['id'] }}">
+                      <i class="fa-solid fa-check"></i> Setuju
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item text-danger" href="/permintaan/tolak/{{ p['id'] }}">
+                      <i class="fa-solid fa-xmark"></i> Tolak
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item text-secondary" href="/permintaan/hapus/{{ p['id'] }}" onclick="return confirm('Hapus permintaan ini?')">
+                      <i class="fa-solid fa-trash"></i> Hapus
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              {% if p['bukti_tf'] %}
+                <a href="/{{ p['bukti_tf'] }}" target="_blank" class="btn btn-sm btn-success">
+                  <i class="fa-solid fa-receipt"></i> Lihat
+                </a>
+              {% else %}
+                <form action="/permintaan/upload_bukti/{{ p['id'] }}" method="post" enctype="multipart/form-data" class="d-flex">
+                  <input type="file" name="bukti_tf" class="form-control form-control-sm" required>
+                  <button type="submit" class="btn btn-sm btn-primary ms-1">
+                    <i class="fa-solid fa-upload"></i>
+                  </button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
