@@ -33,7 +33,6 @@
           <th>File</th>
           <th>Status</th>
           <th>Dibuat</th>
-          <th>Aksi</th>
           <th>bukti tf</th>
         </tr>
       </thead>
@@ -57,6 +56,7 @@
                 <span class="badge bg-warning">Menunggu</span>
               {% elif p['status'] == "disetujui" %}
                 <span class="badge bg-success">Disetujui</span>
+
               {% else %}
                 <span class="badge bg-danger">Ditolak</span>
               {% endif %}
@@ -92,12 +92,12 @@
                   <i class="fa-solid fa-receipt"></i> Lihat
                 </a>
               {% else %}
-                <form action="/permintaan/upload_bukti/{{ p['id'] }}" method="post" enctype="multipart/form-data" class="d-flex">
-                  <input type="file" name="bukti_tf" class="form-control form-control-sm" required>
-                  <button type="submit" class="btn btn-sm btn-primary ms-1">
-                    <i class="fa-solid fa-upload"></i>
-                  </button>
-                </form>
+                <form action="/permintaan/upload_bukti/{{ p.id }}" 
+                      method="post" 
+                      enctype="multipart/form-data">
+                   <input type="file" name="file_upload" required>
+                   <button type="submit" class="btn btn-sm btn-primary">Upload Bukti TF</button>
+               </form>
               {% endif %}
             </td>
           </tr>

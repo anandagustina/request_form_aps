@@ -15,4 +15,7 @@ class Request(Base):
     created_date = Column(String(50), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
+    # --- Tambahan kolom untuk bukti transfer ---
+    bukti_tf = Column(String(255), nullable=True)
+
     user = relationship("User", back_populates="requests")

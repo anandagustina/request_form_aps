@@ -27,7 +27,7 @@ async def dashboard_page(request: Request, db: Session = Depends(get_db)):
             "deskripsi": r.Request.deskripsi,
             "anggaran": r.Request.anggaran,
             "file_path": r.Request.file_path,
-            "status": r.Request.status,
+            "Aksi": r.Request.status,
             "created_at": r.Request.created_date,
             "username": r.username,  # ini dari tabel User
         }
@@ -43,4 +43,19 @@ async def dashboard_page(request: Request, db: Session = Depends(get_db)):
     )
     
     else:
-        return templates.TemplateResponse("dashboard_karyawan.html", {"request": request})
+        data_permintaan_user = db.query(RequestModel).filter(RequestModel.user_id == int(request.cookies.get("uid"))).all()
+        permintaan = [
+            {
+                "id": p.id,
+                "judul": p.judul,
+                "deskripsi": p.deskripsi,
+                "anggaran": p.anggaran,
+                "file_path": p.file_path,
+                "Aksi": p.status,
+                "created_at": p.created_date,
+            }
+            for p in data_permintaan_user
+        ]
+        return templates.TemplateResponse("dashboard_karyawan.html", 
+                                        {"request": request, "username": request.cookies.get("username"), 
+                                         "permintaan": permintaan})
